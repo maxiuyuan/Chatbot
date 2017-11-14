@@ -34,7 +34,27 @@ app.post('/webhook/', function(req, res) {
 		let sender = event.sender.id
 		if (event.message && event.message.text) {
 			let text = event.message.text
-			sendText(sender, "Text echo: " + text.substring(0, 100))
+      text = text.toLowerCase()
+
+      if(text.includes("weather")){
+
+        var YQL = require('yql');
+        var query = new YQL('select item.condition from weather.forecast where woeid = 4118');
+
+        query.exec(function(err, data) {
+           var condition = data.query.results.channel.item.condition;
+
+                text = "The current weather in " + condition.temp
+
+                	sendText(sender, text.substring(0, 100))
+         })
+
+      }
+      else{
+        text = "Sorry, The command you entered is not valid. Please Type one of these commands: weather"
+      }
+			sendText(sender, text.substring(0, 100))
+     //sendMessage(sender, text.substring(0, 100))
 		}
 	}
 	res.sendStatus(200)
@@ -58,6 +78,15 @@ function sendText(sender, text) {
 		}
 	})
 }
+
+/*function sendMessage(sender, text1){
+  let text = text1.toLowerCase()
+  if (text.include("weather")){
+
+  else{
+    sendText(sender, "Sorry thats not one of the options. Try typing: Weather")
+  }
+}*/
 
 app.listen(app.get('port'), function(){
   console.log("running: port")
