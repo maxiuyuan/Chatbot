@@ -6,7 +6,7 @@ const request = require('request')
 
 const app = express()
 
-const token = [REMOVED_TOKEN_ID_FOR_SECURITY]
+const token = "EAAE5Hez6YUsBALJBKBDr8TgZBid7utHQPt3Xmp4zbO2LFoMCzrqQ96ZCHhAbnryP8qkTREIPhaD2cKkIZBrfIWBmMuxOv2gwD2e5nncNubiQ9M0hLPhgreXv31zmuwpJDx0ksqoygu2jmjD9xmwKrfZB2EeAG7hqoZBQ5hRI7UtuZCcNYmF5ZC7"
 
 app.set('port', (process.env.PORT || 5000))
 app.use(bodyParser.urlencoded({extended: false}))
@@ -39,12 +39,12 @@ app.post('/webhook/', function(req, res) {
       if(text.includes("weather")){
 
         var YQL = require('yql');
-        var query = new YQL('select item.condition from weather.forecast where woeid = 4118');
+        var query = new YQL('select item.condition from weather.forecast where woeid = 4118 and u="c"');
 
         query.exec(function(err, data) {
            var condition = data.query.results.channel.item.condition;
 
-                text = "The current weather in " + condition.temp
+                text = "The current weather in Toronto is " + condition.temp + "°C and it is currently " + condition.text.toLowerCase()
 
                 	sendText(sender, text.substring(0, 100))
          })
@@ -52,9 +52,9 @@ app.post('/webhook/', function(req, res) {
       }
       else{
         text = "Sorry, The command you entered is not valid. Please Type one of these commands: weather"
+        sendText(sender, text.substring(0, 100))
       }
-			sendText(sender, text.substring(0, 100))
-     //sendMessage(sender, text.substring(0, 100))
+			//sendMessage(sender, text.substring(0, 100))
 		}
 	}
 	res.sendStatus(200)
