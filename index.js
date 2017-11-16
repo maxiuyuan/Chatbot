@@ -48,13 +48,13 @@ app.post('/webhook/', function(req, res) {
 
                 text = "The current weather in Toronto on " + date + " at "+ time + " is " + condition.temp + "°C. The current condition is: " + condition.text.toLowerCase()
 
-                sendText(sender, text.substring(0, 100))
+                sendText(sender, text.substring(0, 1000))
          })
 
       }
       else{
         text = "Sorry, The command you entered is not valid. Please Type one of these commands: weather"
-        sendText(sender, text.substring(0, 100))
+        sendText(sender, text.substring(0, 1000))
       }
 			//sendMessage(sender, text.substring(0, 100))
 		}
