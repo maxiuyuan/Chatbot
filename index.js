@@ -6,7 +6,7 @@ const request = require('request')
 
 const app = express()
 
-const token = [TOKEN_HIDDEN_FOR_SECURITY]
+const token = "EAAE5Hez6YUsBALJBKBDr8TgZBid7utHQPt3Xmp4zbO2LFoMCzrqQ96ZCHhAbnryP8qkTREIPhaD2cKkIZBrfIWBmMuxOv2gwD2e5nncNubiQ9M0hLPhgreXv31zmuwpJDx0ksqoygu2jmjD9xmwKrfZB2EeAG7hqoZBQ5hRI7UtuZCcNYmF5ZC7"
 
 app.set('port', (process.env.PORT || 5000))
 app.use(bodyParser.urlencoded({extended: false}))
@@ -41,12 +41,14 @@ app.post('/webhook/', function(req, res) {
         var YQL = require('yql');
         var query = new YQL('select item.condition from weather.forecast where woeid = 4118 and u="c"');
 
-        query.exec(function(err, data) {
-           var condition = data.query.results.channel.item.condition;
+            query.exec(function(err, data) {
+                var condition = data.query.results.channel.item.condition;
+                var date = condition.date.substring(0, 16);
+                var time = condition.date.substring(17, 25);
 
-                text = "The current weather in Toronto is " + condition.temp + "°C and it is currently " + condition.text.toLowerCase()
+                text = "The current weather in Toronto on " + date + " at "+ time + " is " + condition.temp + "°C. The current condition is: " + condition.text.toLowerCase()
 
-                	sendText(sender, text.substring(0, 100))
+                sendText(sender, text.substring(0, 100))
          })
 
       }
