@@ -94,6 +94,10 @@ function decideMessage(sender, text){
           sendOutfitImage(sender, url)
         }
 
+        else if (text.includes("no")){
+          text = "Alright, enter one of the following commands for another feature: Weather"
+          sendText(sender, text.substring(0, 100))
+        }
 
         else{
           text = "Sorry, The command you entered is not valid. Please Type one of these commands: weather"
@@ -124,8 +128,8 @@ function getOutfit(text){
                 "https://i.imgur.com/UthAQ4o.jpg",
                 "https://i.imgur.com/Bz9JtU0.jpg"
                 ]
-var i =Math.floor(Math.random() * 20);
-return outfit[i]
+  var i =Math.floor(Math.random() * 20);
+  return outfit[i]
 }
 
 function sendText(sender, text) {
@@ -164,7 +168,7 @@ function sendOutfitButton(sender){
       {
         "type":"postback",
         "title":"No",
-        "payload":"asdsadasd"
+        "payload":"no"
       }
     ]
   }
@@ -172,6 +176,7 @@ function sendOutfitButton(sender){
   }
   sendRequest(sender, messageData)
 }
+
 
 function sendOutfitImage(sender, url){
   let messageData = {
