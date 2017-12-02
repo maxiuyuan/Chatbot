@@ -90,7 +90,8 @@ function decideMessage(sender, text){
 
         }
         else if(text.includes("yes")){
-          sendOutfitImage(sender)
+          var url = getOutfit(text)
+          sendOutfitImage(sender, url)
         }
 
 
@@ -101,6 +102,31 @@ function decideMessage(sender, text){
   			//sendMessage(sender, text.substring(0, 100))
   		}
 
+function getOutfit(text){
+  var outfit = ["https://i.imgur.com/M7dHcQN.png",
+                "https://i.imgur.com/F8wmHCY.jpg",
+                "https://i.imgur.com/4bTGCSh.jpg",
+                "https://i.imgur.com/IaNMgFG.jpg",
+                "https://i.imgur.com/QAYPso1.jpg",
+                "https://i.imgur.com/TmgoHNe.jpg",
+                "https://i.imgur.com/RojUhWO.jpg",
+                "https://i.imgur.com/ERn6j8x.jpg",
+                "https://i.imgur.com/Sg42ocL.jpg",
+                "https://i.imgur.com/rRPv18m.png",
+                "https://i.imgur.com/tdmfl2S.jpg",
+                "https://i.imgur.com/dzklp49.jpg",
+                "https://i.imgur.com/LIEW0Fy.jpg",
+                "https://i.imgur.com/jW6mgEV.jpg",
+                "https://i.imgur.com/dmb2imY.jpg",
+                "https://i.imgur.com/XIBDt3b.jpg",
+                "https://i.imgur.com/BBCJtC9.jpg",
+                "https://i.imgur.com/nrMh2ZD.jpg",
+                "https://i.imgur.com/UthAQ4o.jpg",
+                "https://i.imgur.com/Bz9JtU0.jpg"
+                ]
+var i =Math.floor(Math.random() * 20);
+return outfit[i]
+}
 
 function sendText(sender, text) {
 	let messageData = {text: text}
@@ -147,12 +173,12 @@ function sendOutfitButton(sender){
   sendRequest(sender, messageData)
 }
 
-function sendOutfitImage(sender){
+function sendOutfitImage(sender, url){
   let messageData = {
     "attachment": {
       "type": "image",
       "payload": {
-          "url": "https://i.imgur.com/M7dHcQN.png"
+          "url": url
       }
     }
   }
