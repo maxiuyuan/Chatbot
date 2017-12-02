@@ -6,7 +6,7 @@ const request = require('request')
 
 const app = express()
 
-const token = [TOKEN_HIDDEN_FOR_PRIVACY]
+const token = "EAAE5Hez6YUsBALJBKBDr8TgZBid7utHQPt3Xmp4zbO2LFoMCzrqQ96ZCHhAbnryP8qkTREIPhaD2cKkIZBrfIWBmMuxOv2gwD2e5nncNubiQ9M0hLPhgreXv31zmuwpJDx0ksqoygu2jmjD9xmwKrfZB2EeAG7hqoZBQ5hRI7UtuZCcNYmF5ZC7"
 
 app.set('port', (process.env.PORT || 5000))
 app.use(bodyParser.urlencoded({extended: false}))
@@ -35,8 +35,9 @@ app.post('/webhook/', function(req, res) {
 		if (event.message && event.message.text) {
 			let text = event.message.text
       text = text.toLowerCase()
+      decideMessage(sender, text)
 
-      if(text.includes("weather")){
+    /*  if(text.includes("weather")){
 
         var YQL = require('yql');
         var query = new YQL('select item.condition from weather.forecast where woeid = 4118 and u="c"');
@@ -54,17 +55,57 @@ app.post('/webhook/', function(req, res) {
       }
       else{
         text = "Sorry, The command you entered is not valid. Please Type one of these commands: weather"
-        sendText(sender, text.substring(0, 1000))
+        sendText(sender, text.substring(0, 100))
       }
 			//sendMessage(sender, text.substring(0, 100))
-		}
-	}
+		}*/
+  }
+    if(event.postback){
+      let text = JSON.stringify(event.postback)
+      decideMessage(sender, text)
+      continue
+    }
+}
 	res.sendStatus(200)
 })
 
+function decideMessage(sender, text){
+
+        if(text.includes("weather")){
+
+          var YQL = require('yql');
+          var query = new YQL('select item.condition from weather.forecast where woeid = 4118 and u="c"');
+
+              query.exec(function(err, data) {
+                  var condition = data.query.results.channel.item.condition;
+                  var date = condition.date.substring(0, 16);
+                  var time = condition.date.substring(17, 25);
+
+                  text = "The current weather in Toronto on " + date + " at "+ time + " is " + condition.temp + "°C. The current condition is: " + condition.text.toLowerCase()
+
+                  sendText(sender, text.substring(0, 1000))
+                  sendOutfitButton(sender)
+
+           })
+
+        }
+        else if(text.includes("yes")){
+          sendOutfitImage(sender)
+        }
+
+
+        else{
+          text = "Sorry, The command you entered is not valid. Please Type one of these commands: weather"
+          sendText(sender, text.substring(0, 100))
+        }
+  			//sendMessage(sender, text.substring(0, 100))
+  		}
+
+
 function sendText(sender, text) {
 	let messageData = {text: text}
-	request({
+  sendRequest(sender, messageData)
+/*	request({
 		url: "https://graph.facebook.com/v2.6/me/messages",
 		qs : {access_token: token},
 		method: "POST",
@@ -78,7 +119,62 @@ function sendText(sender, text) {
 		} else if (response.body.error) {
 			console.log("response body error")
 		}
-	})
+	})*/
+}
+
+function sendOutfitButton(sender){
+  let messageData = {
+  "attachment":{
+  "type":"template",
+  "payload":{
+    "template_type":"button",
+    "text":"Would you like an outfit recommendation for today?",
+    "buttons":[
+      {
+        "type":"postback",
+        "title":"Yes",
+        "payload":"yes"
+      },
+      {
+        "type":"postback",
+        "title":"No",
+        "payload":"asdsadasd"
+      }
+    ]
+  }
+}
+  }
+  sendRequest(sender, messageData)
+}
+
+function sendOutfitImage(sender){
+  let messageData = {
+    "attachment": {
+      "type": "image",
+      "payload": {
+          "url": "https://i.imgur.com/M7dHcQN.png"
+      }
+    }
+  }
+  sendRequest(sender, messageData)
+}
+
+function sendRequest(sender, messageData){
+  request({
+    url: "https://graph.facebook.com/v2.6/me/messages",
+    qs : {access_token: token},
+    method: "POST",
+    json: {
+      recipient: {id: sender},
+      message : messageData,
+    }
+  }, function(error, response, body) {
+    if (error) {
+      console.log("sending error")
+    } else if (response.body.error) {
+      console.log("response body error")
+    }
+  })
 }
 
 /*function sendMessage(sender, text1){
